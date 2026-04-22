@@ -1,0 +1,7 @@
+gymnasium[atari,accept-rom-license]
+ale-py
+torch
+numpy
+matplotlib
+opencv-python
+tqdm
