@@ -12,8 +12,8 @@ from tensorflow.keras import layers
 # SETTINGS
 # =========================
 
-EPISODES = 10
-MAX_STEPS = 50
+EPISODES = 100
+MAX_STEPS = 500
 
 GAMMA = 0.99
 LEARNING_RATE = 0.00025
