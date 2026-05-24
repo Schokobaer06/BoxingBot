@@ -78,7 +78,7 @@ Die Datei `plots/training_curve.png` zeigt den Reward-Verlauf über alle Trainin
 
 Der Agent wird gegen den integrierten Standard-Gegner des Boxing-Environments getestet. Es werden 5 Spiele durchgeführt und der Durchschnittsreward berechnet.
 
-**5. Hyperparameter**
+### 5. Hyperparameter
 
 ```Algorithmus: Double Deep Q-Learning (DDQN)
 Lernrate: 0.00025
@@ -86,13 +86,13 @@ Discount Faktor (Gamma): 0.99
 Batch Size: 64
 Replay Memory Size: 100000
 Epsilon Start: 1.0
-Epsilon End: 0.1
-Epsilon Decay: 0.995
-Training Episoden: 500
-Target Network Update: 10 Episoden
+Epsilon End: 0.05
+Epsilon Decay: 0.997
+Training Episoden: 800
+Target Network Update: jede 10 Episoden
 ```
 
-**6. Schriftliche Dokumentation**
+### 6. Schriftliche Dokumentation
 
 Agent:
 
@@ -112,8 +112,8 @@ Reward-Funktion:
 
 Neuronales Netz:
 
->Convolutional Neural Network mit drei Conv-Layern und zwei Fully Connected Layers.
-Input: 84x84x4 Frame Stack
+>Convolutional Neural Network mit drei Conv-Layern und zwei Fully Connected Layers.</br>
+**Input**: 84x84x4 Frame Stack</br>
 Output: Q-Werte für alle möglichen Aktionen
 
 Observation:
@@ -124,6 +124,35 @@ Aktionen:
 
 >Diskrete Aktionsmenge des Atari Boxing Environments.
 
-**7. Reflexion**
+### 7. Reflexion
 
-Längere Trainingszeiten sind notwendig.
+1. Architektur
+
+
+* DQN mit Verbesserungen in Richtung Double DQN benutze
+* Ziel war es, einen Agenten zu bauen
+
+
+2. Hyperparameter wurden wie folgt gewählt:
+
+* `Lernrate 0.00025`, da sie sich in vielen DQN-Implementierungen als stabil erwiesen hat
+* `Discount Faktor 0.99`, um zukünftige Belohnungen stark zu berücksichtigen
+* `Batch Size 64` als Kompromiss zwischen Stabilität und Geschwindigkeit
+* `Replay Memory 100000`, um genügend vergangene Erfahrungen zu speichern
+* `Epsilon Start 1.0` für vollständige Exploration am Anfang
+* `Epsilon Min 0.05 bis 0.1` für spätere Ausnutzung gelernter Strategien
+* `Epsilon Decay 0.997` für langsamen Übergang von Exploration zu Exploitation
+
+3. Was funktioniert hat
+   
+* Das Training läuft auf GPU
+* Replay Memory funktioniert (glaube ich)
+
+4. Was nicht gut funktioniert hat
+   
+* Training dauert lang
+* Reward schwankt stark
+
+1. Gründe für Problleme
+   
+* Schwer zu sagen, was das gewünschter Ergebnis sein soll oder nicht
