@@ -29,7 +29,7 @@ print("Using device:", device)
 
 # Einstellungen
 
-EPISODES = 30
+EPISODES = 800
 
 MAX_STEPS = 2000
 

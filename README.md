@@ -7,7 +7,7 @@ https://ale.farama.org/environments/boxing/
 
 ### 1. Projektbeschreibung
 
-Dieses Projekt benutz NVIDIA GPU  via CUDA zum trainieren
+Dieses Projekt benutzt GPU-Beschleuningung via CUDA zum trainieren falls verfügbar (sonst CPU)
 
 ### 2. Voraussetzungen
 
@@ -42,43 +42,62 @@ Python 3.10 oder höher
 
 `python src/train.py`
 
-Während des Trainings wird ein Modell trainiert und regelmäßig aktualisiert. Am Ende wird das Modell gespeichert als:
+Während des Trainings wird ein Deep Q-Network (DDQN) auf dem Boxing Environment trainiert.
+
+Das Training speichert mehrere Arten von Modellen:
+
+**1. Best Model (wichtig für Evaluation)**  
+`models/boxing_model_best.pth`
+
+Dieses Modell wird automatisch aktualisiert, sobald sich die durchschnittliche Performance des Agenten verbessert.
+
+---
+
+**2. Regelmäßige Checkpoints**
+
+`models/checkpoints/checkpoint_ep50.pth`  
+`models/checkpoints/checkpoint_ep100.pth`  
+...
+
+Diese werden alle 50 Episoden gespeichert und dienen zur:
+- Analyse des Trainingsverlaufs
+- Wiederherstellung früherer Zustände
+
+---
+
+**3. Finales Modell**
 
 `models/boxing_model.pth`
 
-Zusätzlich wird eine Trainingskurve gespeichert:
+Wird am Ende des Trainings gespeichert.
 
-`plots/training_curve.png`
+### 5. Gespeicherter Agent
 
-***1. Evaluation des Agenten***
+Es existieren mehrere gespeicherte Modelle:
 
-Zur Evaluation gegen den integrierten Atari-Gegner:
+**Bestes Modell (für Evaluation empfohlen):**
 
-`python src/evaluate.py`
+`models/boxing_model_best.pth`
 
-Die Evaluation führt 5 Spiele durch und gibt den durchschnittlichen Reward aus
+Dieses Modell wird während des Trainings automatisch aktualisiert und repräsentiert die beste bisher erreichte Leistung.
 
-Zusätzlich wird ein Video der Evaluation gespeichert:
+---
 
-`videos/evaluation_video.mp4`
-
-**2. Gespeicherter Agent**
-
-Der trainierte Agent wird in der Datei gespeichert:
+**Finales Modell:**
 
 `models/boxing_model.pth`
 
-Dieser kann direkt geladen und für die Evaluation verwendet werden.
+Wird nach Abschluss des Trainings gespeichert.
 
-**3. Trainingskurve**
+---
 
-Die Datei `plots/training_curve.png` zeigt den Reward-Verlauf über alle Trainingsepisoden und dokumentiert den Lernfortschritt.
+**Checkpoints:**
 
-**4. Evaluation gegen Standard-Gegner**
+`models/checkpoints/`
 
-Der Agent wird gegen den integrierten Standard-Gegner des Boxing-Environments getestet. Es werden 5 Spiele durchgeführt und der Durchschnittsreward berechnet.
+Enthält Zwischenstände des Trainings zur Analyse oder Wiederaufnahme.
 
-### 5. Hyperparameter
+### 6. Hyperparameter
 
 ```Algorithmus: Double Deep Q-Learning (DDQN)
 Lernrate: 0.00025
@@ -90,9 +109,12 @@ Epsilon End: 0.05
 Epsilon Decay: 0.997
 Training Episoden: 800
 Target Network Update: jede 10 Episoden
+Evaluation Modell: boxing_model_best.pth
+Checkpoint Intervall: 50 Episoden
+Best Model Kriterium: durchschnittlicher Reward über Episoden
 ```
 
-### 6. Schriftliche Dokumentation
+### 7. Schriftliche Dokumentation
 
 Agent:
 
@@ -124,7 +146,7 @@ Aktionen:
 
 >Diskrete Aktionsmenge des Atari Boxing Environments.
 
-### 7. Reflexion
+### 8. Reflexion
 
 1. Architektur
 
@@ -146,9 +168,9 @@ Aktionen:
 3. Was funktioniert hat
    
 * Das Training läuft auf GPU
-* Replay Memory funktioniert (glaube ich)
+* Replay Memory funktioniert
 
-4. Was nicht gut funktioniert hat
+1. Was nicht gut funktioniert hat
    
 * Training dauert lang
 * Reward schwankt stark
