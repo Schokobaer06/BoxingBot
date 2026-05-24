@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import random
+import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 
@@ -26,9 +27,9 @@ print("Using device:", device)
 # SETTINGS
 # =========================
 
-EPISODES = 500
+EPISODES = 10
 
-MAX_STEPS = 5000
+MAX_STEPS = 5
 
 BATCH_SIZE = 64
 
@@ -41,6 +42,8 @@ EPSILON_MIN = 0.1
 EPSILON_DECAY = 0.995
 
 MEMORY_SIZE = 100000
+
+TARGET_UPDATE = 10
 
 # =========================
 # ENVIRONMENT
@@ -55,6 +58,14 @@ action_size = env.action_space.n # type: ignore
 # =========================
 
 policy_net = DQN(action_size).to(device)
+
+target_net = DQN(action_size).to(device)
+
+target_net.load_state_dict(
+    policy_net.state_dict()
+)
+
+target_net.eval()
 
 optimizer = optim.Adam(
     policy_net.parameters(),
@@ -151,14 +162,20 @@ for episode in range(EPISODES):
 
             with torch.no_grad():
 
-                max_next_q = policy_net(
+                next_actions = policy_net(
                     next_states
-                ).max(1)[0]
+                ).argmax(1)
+
+                next_q_values = target_net(
+                    next_states
+                ).gather(
+                    1,
+                    next_actions.unsqueeze(1)
+                ).squeeze()
 
                 target_q = rewards + (
-                    GAMMA * max_next_q * (1 - dones)
+                    GAMMA * next_q_values * (1 - dones)
                 )
-
             loss = criterion(current_q, target_q)
 
             optimizer.zero_grad()
@@ -174,12 +191,18 @@ for episode in range(EPISODES):
         EPSILON *= EPSILON_DECAY
 
     reward_history.append(total_reward)
+    if (episode + 1) % TARGET_UPDATE == 0:
+        target_net.load_state_dict(
+            policy_net.state_dict()
+        )
+        print("Target network updated.")
 
     print(
         f"Episode {episode+1} | "
         f"Reward: {total_reward:.2f} | "
         f"Epsilon: {EPSILON:.3f}"
     )
+    
 
 # =========================
 # SAVE MODEL
@@ -189,6 +212,16 @@ torch.save(
     policy_net.state_dict(),
     "boxing_model.pth"
 )
+
+plt.plot(reward_history)
+
+plt.xlabel("Episode")
+plt.ylabel("Reward")
+plt.title("Training Reward Curve")
+
+plt.savefig("training_curve.png")
+
+plt.show()
 
 print("Training finished.")
 
