@@ -44,11 +44,11 @@ Python 3.10 oder höher
 
 Während des Trainings wird ein Modell trainiert und regelmäßig aktualisiert. Am Ende wird das Modell gespeichert als:
 
-`boxing_model.pth`
+`models/boxing_model.pth`
 
 Zusätzlich wird eine Trainingskurve gespeichert:
 
-`training_curve.png`
+`plots/training_curve.png`
 
 ***1. Evaluation des Agenten***
 
@@ -60,19 +60,19 @@ Die Evaluation führt 5 Spiele durch und gibt den durchschnittlichen Reward aus
 
 Zusätzlich wird ein Video der Evaluation gespeichert:
 
-`evaluation_video.mp4`
+`videos/evaluation_video.mp4`
 
 **2. Gespeicherter Agent**
 
 Der trainierte Agent wird in der Datei gespeichert:
 
-`boxing_model.pth`
+`models/boxing_model.pth`
 
 Dieser kann direkt geladen und für die Evaluation verwendet werden.
 
 **3. Trainingskurve**
 
-Die Datei `training_curve.png` zeigt den Reward-Verlauf über alle Trainingsepisoden und dokumentiert den Lernfortschritt.
+Die Datei `plots/training_curve.png` zeigt den Reward-Verlauf über alle Trainingsepisoden und dokumentiert den Lernfortschritt.
 
 **4. Evaluation gegen Standard-Gegner**
 
