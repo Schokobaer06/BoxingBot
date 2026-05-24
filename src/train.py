@@ -17,9 +17,8 @@ import os
 os.makedirs("models", exist_ok=True)
 os.makedirs("plots", exist_ok=True)
 os.makedirs("videos", exist_ok=True)
-# =========================
-# DEVICE
-# =========================
+
+# Device
 
 device = torch.device(
     "cuda" if torch.cuda.is_available() else "cpu"
@@ -27,9 +26,7 @@ device = torch.device(
 
 print("Using device:", device)
 
-# =========================
-# SETTINGS
-# =========================
+# Einstellungen
 
 EPISODES = 10
 
@@ -49,17 +46,13 @@ MEMORY_SIZE = 100000
 
 TARGET_UPDATE = 10
 
-# =========================
-# ENVIRONMENT
-# =========================
+# Envirionment
 
 env = gym.make("ALE/Boxing-v5")
 
 action_size = env.action_space.n # type: ignore
 
-# =========================
-# MODEL
-# =========================
+# Model
 
 policy_net = DQN(action_size).to(device)
 
@@ -80,9 +73,7 @@ criterion = nn.MSELoss()
 
 memory = ReplayMemory(MEMORY_SIZE)
 
-# =========================
-# TRAINING
-# =========================
+# Training
 
 reward_history = []
 
@@ -130,7 +121,7 @@ for episode in range(EPISODES):
 
         total_reward += reward # type: ignore
 
-        # TRAINING
+        # trainieren, wenn genug Daten da sind
         if len(memory) >= BATCH_SIZE:
 
             batch = memory.sample(BATCH_SIZE)
@@ -208,9 +199,7 @@ for episode in range(EPISODES):
     )
     
 
-# =========================
-# SAVE MODEL
-# =========================
+# Model speichern
 
 torch.save(
     policy_net.state_dict(),

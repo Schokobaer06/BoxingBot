@@ -5,7 +5,7 @@ from collections import deque
 frame_stack = deque(maxlen=4)
 
 def preprocess(frame):
-
+    # Bild in Graustufen und klein machen
     gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
     resized = cv2.resize(gray, (84, 84))
@@ -15,7 +15,7 @@ def preprocess(frame):
     return normalized.astype(np.float32)
 
 def reset_stack(frame):
-
+    # stack am beginn füllen
     processed = preprocess(frame)
 
     frame_stack.clear()
