@@ -1,3 +1,5 @@
+# um zu testen, ob gpu training geht
+
 import torch
 
 print("Torch Version:", torch.__version__)
