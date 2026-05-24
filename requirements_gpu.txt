@@ -1,6 +1,0 @@
-gymnasium[atari,accept-rom-license]
-ale-py
-opencv-python
-matplotlib
-numpy
-tqdm
