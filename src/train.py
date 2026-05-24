@@ -12,7 +12,11 @@ from tqdm import tqdm
 from model import DQN
 from replay_memory import ReplayMemory
 from utils import reset_stack, stack_frames
+import os
 
+os.makedirs("models", exist_ok=True)
+os.makedirs("plots", exist_ok=True)
+os.makedirs("videos", exist_ok=True)
 # =========================
 # DEVICE
 # =========================
@@ -210,7 +214,7 @@ for episode in range(EPISODES):
 
 torch.save(
     policy_net.state_dict(),
-    "boxing_model.pth"
+    "models/boxing_model.pth"
 )
 
 plt.plot(reward_history)
@@ -219,7 +223,7 @@ plt.xlabel("Episode")
 plt.ylabel("Reward")
 plt.title("Training Reward Curve")
 
-plt.savefig("training_curve.png")
+plt.savefig("plots/training_curve.png")
 
 plt.show()
 

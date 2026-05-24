@@ -20,17 +20,20 @@ Python 3.10 oder höher
 `pip install -r requirements.txt `
 
 ### 3. Projektstruktur
-```
-src/
-    train.py
-    evaluate.py
-    model.py
-    replay_memory.py
-    utils.py
+```             
++---models
+        
++---plots
++---src
+|       evaluate.py
+|       gpu_test.py
+|       model.py
+|       replay_memory.py
+|       train.py
+|       utils.py
+|       
+\---videos
 
-boxing_model.pth
-training_curve.png
-evaluation_video.mp4
 ```
 
 ### 4. Training des Agenten

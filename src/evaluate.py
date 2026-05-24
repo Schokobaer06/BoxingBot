@@ -7,6 +7,12 @@ import imageio
 
 from model import DQN
 from utils import reset_stack, stack_frames
+import os
+
+os.makedirs("models", exist_ok=True)
+os.makedirs("plots", exist_ok=True)
+os.makedirs("videos", exist_ok=True)
+
 
 # =========================
 # DEVICE
@@ -24,7 +30,7 @@ env = gym.make("ALE/Boxing-v5", render_mode="rgb_array")
 action_size = env.action_space.n # type: ignore
 
 model = DQN(action_size).to(device)
-model.load_state_dict(torch.load("boxing_model.pth", map_location=device))
+model.load_state_dict(torch.load("models/boxing_model.pth", map_location=device))
 model.eval()
 
 # =========================
@@ -94,7 +100,7 @@ print("========================")
 # SAVE VIDEO
 # =========================
 
-video_path = "evaluation_video.mp4"
+video_path = "videos/evaluation_video.mp4"
 
 imageio.mimsave(video_path, frames, fps=30)
 
