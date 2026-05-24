@@ -26,7 +26,7 @@ env = gym.make("ALE/Boxing-v5", render_mode="rgb_array")
 action_size = env.action_space.n # type: ignore
 
 model = DQN(action_size).to(device)
-model.load_state_dict(torch.load("models/boxing_model.pth", map_location=device))
+model.load_state_dict(torch.load("models/boxing_model_final.pth", map_location=device))
 model.eval()
 
 # Evaluation Einnstellungen

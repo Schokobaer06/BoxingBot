@@ -17,6 +17,7 @@ import os
 os.makedirs("models", exist_ok=True)
 os.makedirs("plots", exist_ok=True)
 os.makedirs("videos", exist_ok=True)
+os.makedirs("models/checkpoints", exist_ok=True)
 
 # Device
 
@@ -28,7 +29,7 @@ print("Using device:", device)
 
 # Einstellungen
 
-EPISODES = 800
+EPISODES = 30
 
 MAX_STEPS = 2000
 
@@ -45,6 +46,8 @@ EPSILON_DECAY = 0.997
 MEMORY_SIZE = 100000
 
 TARGET_UPDATE = 10
+
+best_reward = -float("inf")
 
 # Envirionment
 
@@ -122,7 +125,7 @@ for episode in range(EPISODES):
         total_reward += reward # type: ignore
 
         # trainieren, wenn genug Daten da sind
-        if len(memory) >= BATCH_SIZE:
+        if len(memory) >= BATCH_SIZE and step % 4 == 0:
 
             batch = memory.sample(BATCH_SIZE)
 
@@ -176,7 +179,7 @@ for episode in range(EPISODES):
             optimizer.zero_grad()
 
             loss.backward()
-
+            torch.nn.utils.clip_grad_norm_(policy_net.parameters(), 10)
             optimizer.step()
 
         if done:
@@ -186,11 +189,36 @@ for episode in range(EPISODES):
         EPSILON *= EPSILON_DECAY
 
     reward_history.append(total_reward)
-    if (episode + 1) % TARGET_UPDATE == 0:
+
+    # best model speichern
+
+    if len(reward_history) > 10:
+        avg_reward = sum(reward_history[-10:]) / 10
+    else:
+        avg_reward = total_reward
+
+    if avg_reward > best_reward:
+        best_reward = avg_reward
+
+        torch.save(
+            policy_net.state_dict(),
+            "models/boxing_model_best.pth"
+        )
+
+        print(f"Best model updated with new Reward = {best_reward}")
+
+    if episode % TARGET_UPDATE == 0:
         target_net.load_state_dict(
             policy_net.state_dict()
         )
         print("Target network updated.")
+
+    # checkpoint speichern
+    if (episode + 1) % 25 == 0:
+        checkpoint_path = f"models/checkpoints/checkpoint_ep{episode + 1}.pth"
+        
+        torch.save(policy_net.state_dict(), checkpoint_path)
+        print(f"Checkpoint gespeichert: {checkpoint_path}")
 
     print(
         f"Episode {episode+1} | "
@@ -199,12 +227,12 @@ for episode in range(EPISODES):
     )
     
 
-# Model speichern
+# final Model speichern
 
 torch.save(
     policy_net.state_dict(),
-    "models/boxing_model.pth"
-)
+    "models/boxing_model_final.pth"
+) 
 
 plt.plot(reward_history)
 
