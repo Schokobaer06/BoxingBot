@@ -34,7 +34,7 @@ reward_history = []
 # =========================
 
 env = gym.make("ALE/Boxing-v5")
-ACTION_SIZE = int(env.action_space.n)
+ACTION_SIZE = int(env.action_space.n) # type: ignore
 
 # =========================
 # FRAME STACK
@@ -133,7 +133,7 @@ for episode in range(EPISODES):
         memory.append((state, action, reward, next_state, done))
         state = next_state
 
-        total_reward += reward
+        total_reward += reward # type: ignore
 
         # TRAINING
         if len(memory) >= 1000 and step % 4 == 0:
