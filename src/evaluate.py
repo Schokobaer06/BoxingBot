@@ -14,16 +14,12 @@ os.makedirs("plots", exist_ok=True)
 os.makedirs("videos", exist_ok=True)
 
 
-# =========================
-# DEVICE
-# =========================
+# Device
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("Using device:", device)
 
-# =========================
-# LOAD MODEL
-# =========================
+# Model laden
 
 env = gym.make("ALE/Boxing-v5", render_mode="rgb_array")
 
@@ -33,18 +29,14 @@ model = DQN(action_size).to(device)
 model.load_state_dict(torch.load("models/boxing_model.pth", map_location=device))
 model.eval()
 
-# =========================
-# EVAL SETTINGS
-# =========================
+# Evaluation Einnstellungen
 
 EPISODES = 5
 all_rewards = []
 
 frames = []
 
-# =========================
-# EVALUATION LOOP
-# =========================
+# Evaluation Loop
 
 for episode in range(EPISODES):
 
@@ -66,6 +58,7 @@ for episode in range(EPISODES):
             dtype=torch.float32
         ).unsqueeze(0).to(device)
 
+        # Bei Evaluation nicht trainieren
         with torch.no_grad():
             q_values = model(state_tensor)
 
@@ -85,9 +78,7 @@ for episode in range(EPISODES):
 
     print(f"Episode {episode+1} reward: {total_reward}")
 
-# =========================
-# RESULTS
-# =========================
+# Evaluation Ergebnis
 
 avg_reward = sum(all_rewards) / len(all_rewards)
 
@@ -96,9 +87,7 @@ print("Evaluation finished")
 print(f"Average reward (5 games): {avg_reward:.2f}")
 print("========================")
 
-# =========================
-# SAVE VIDEO
-# =========================
+# Video speichern
 
 video_path = "videos/evaluation_video.mp4"
 

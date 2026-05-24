@@ -1,5 +1,6 @@
 import torch.nn as nn
 
+# Einfaches DQN-Netz für die Aktionsauswahl
 class DQN(nn.Module):
 
     def __init__(self, action_size):
@@ -25,4 +26,5 @@ class DQN(nn.Module):
         )
 
     def forward(self, x):
+        # Vorwärtsdurchlauf durch das Netz
         return self.network(x)
