@@ -231,7 +231,7 @@ for episode in range(EPISODES):
 
 torch.save(
     policy_net.state_dict(),
-    "models/boxing_model_final.pth"
+    "models/boxing_model.pth"
 ) 
 
 plt.plot(reward_history)
