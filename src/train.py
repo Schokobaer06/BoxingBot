@@ -1,3 +1,5 @@
+import glob
+
 import gymnasium as gym
 import ale_py
 import numpy as np
@@ -29,7 +31,7 @@ print("Using device:", device)
 
 # Einstellungen
 
-EPISODES = 800
+EPISODES = 1600
 
 MAX_STEPS = 2000
 
@@ -57,6 +59,12 @@ action_size = env.action_space.n # type: ignore
 
 # Model
 
+# letzen Checkpoint laden
+checkpoint_files = sorted(
+    glob.glob("models/checkpoints/*.pth")
+)
+latest_checkpoint = checkpoint_files[-1] if checkpoint_files else None
+
 policy_net = DQN(action_size).to(device)
 
 target_net = DQN(action_size).to(device)
@@ -80,7 +88,22 @@ memory = ReplayMemory(MEMORY_SIZE)
 
 reward_history = []
 
-for episode in range(EPISODES):
+start_episode = 0
+
+# existiert letzer checkpoint
+if latest_checkpoint:
+    checkpoint = torch.load(latest_checkpoint, map_location=device)
+
+    policy_net.load_state_dict(checkpoint["policy_net"])
+    target_net.load_state_dict(checkpoint["target_net"])
+    optimizer.load_state_dict(checkpoint["optimizer"])
+
+    EPSILON = checkpoint["epsilon"]
+    start_episode = checkpoint["episode"] + 1
+
+    print(f"Checkpoint geladen: {latest_checkpoint}")
+
+for episode in range(start_episode, EPISODES):
 
     obs, info = env.reset()
 
@@ -217,7 +240,13 @@ for episode in range(EPISODES):
     if (episode + 1) % 25 == 0:
         checkpoint_path = f"models/checkpoints/checkpoint_ep{episode + 1}.pth"
         
-        torch.save(policy_net.state_dict(), checkpoint_path)
+        torch.save({
+            "policy_net": policy_net.state_dict(),
+            "target_net": target_net.state_dict(),
+            "optimizer": optimizer.state_dict(),
+            "episode": episode,
+            "epsilon": EPSILON
+        }, checkpoint_path)
         print(f"Checkpoint gespeichert: {checkpoint_path}")
 
     print(
